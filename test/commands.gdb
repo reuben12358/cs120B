@@ -144,7 +144,7 @@ end
 #       With x as the port (A,B,C,D)
 #       The value the port is epected to have. If not it will print the erroneous actual value
 define expectPORTA
-    set $actual = {char}0x800022
+    set $actual = {unsigned char}0x800022
     if $actual != $arg0
         set $passed = 0
         echo \n\tExpected $arg0 \n\t
@@ -153,7 +153,7 @@ define expectPORTA
     end
 end
 define expectPORTB
-    set $actual = {char}0x800025
+    set $actual = {unsigned char}0x800025
     if $actual != $arg0
         set $passed = 0
         echo \n\tExpected $arg0 \n\t
@@ -162,7 +162,7 @@ define expectPORTB
     end
 end
 define expectPORTC
-    set $actual = {char}0x800028
+    set $actual = {unsigned char}0x800028
     if $actual != $arg0
         set $passed = 0
         echo \n\tExpected $arg0 \n\t
@@ -171,7 +171,7 @@ define expectPORTC
     end
 end
 define expectPORTD
-    set $actual = {char}0x80002B
+    set $actual = {unsigned char}0x80002B
     if $actual != $arg0
         set $passed = 0
         echo \n\tExpected $arg0 \n\t

@@ -26,37 +26,45 @@
 echo ======================================================\n
 echo Running all tests..."\n\n
 
-test “1: A,B,C: 20,20,20\n”
-setPINA 0x14
-setPINB 0x14
-setPINC 0x14
+#   Partner(s) Name & E-mail: Lucas Song (lsong013@ucr.edu) Reuben D'cunha
+#   Lab Section: 22
+#   Assignment: Lab # 2 Exercise # 1
+#   Exercise Description: [optional - include for your own benefit]
+#   
+#   I acknowledge all content contained herein, excluding template 
+#    or example code, is my own original work.
+#
+
+
+test “not open/night time-> light not on”
+setPINA 0x00
+#setPINB 0x00
 continue 5
-expectPORTD 0x3C
+expectPORTB 0x00
 checkResult
 
-test “2: A,B,C: 100,20,10\n”
-setPINA 0x64
-setPINB 0x14
-setPINC 0x0A
+test “not open/day time-> light not on”
+setPINA 0x00
+setPINB 0X01
 continue 5
-expectPORTD 0x82
+expectPORTB 0x00
 checkResult
 
-test “3: A,B,C: 10,20,100\n”
-setPINA 0x0A
-setPINB 0x14
-setPINC 0x64
+test “door open/day time-> light not on”
+setPINA 0x00
+setPINB 0X01
 continue 5
-expectPORTD 0x82
+expectPORTB 0x00
 checkResult
 
-test “4: A,B,C: 100,80,10\n”
-setPINA 0x64
-setPINB 0x50
-setPINC 0x0A
+test “door open/nighttime -> light on”
+setPINA 0x01
+setPINB 0X00
 continue 5
-expectPORTD 0xBF
+expectPORTB 0x01
 checkResult
+
+
 
 # Add tests below
 

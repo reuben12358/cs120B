@@ -1,0 +1,22 @@
+$timescale 10ns $end
+$scope module logic $end
+$var wire 1 ! PINA0 $end
+$var wire 1 " PINA2 $end
+$var wire 1 # PINA3 $end
+$var wire 1 $ PINA4 $end
+$var wire 8 % PORTB $end
+$var wire 8 & PINA $end
+$var wire 8 ' PINB $end
+$var wire 1 ( PINB0 $end
+$upscope $end
+$enddefinitions $end
+$dumpvars
+x!
+x"
+x#
+x$
+bxxxxxxxx %
+bxxxxxxxx &
+bxxxxxxxx '
+x(
+$end
