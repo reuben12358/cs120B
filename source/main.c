@@ -28,7 +28,7 @@ unsigned numberOnes(unsigned num) {
 
 int main(void) {
 	DDRA = 0x00; PORTA = 0xFF; // Configure port A's 8 pins as inputs
-	DDRB = 0xFF PORTB = 0x00; // Configure port B's 8 pins as outputs, initialize to 0s
+	DDRB = 0xFF; PORTB = 0x00; // Configure port B's 8 pins as outputs, initialize to 0s
 
 	unsigned char A = 0x00; // temp variable for value of A
 	unsigned char B = 0x01; // temp variable for value of B
