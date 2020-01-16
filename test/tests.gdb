@@ -26,36 +26,25 @@
 echo ======================================================\n
 echo Running all tests..."\n\n
 
-test “1: A,B,C: 20,20,20\n”
-setPINA 0x14
-setPINB 0x14
-setPINC 0x14
+test “1: PINA: 0x01, 0x00, 0x02, 0x00, 0x01, 0x00”
+setPINA 0x01
 continue 5
-expectPORTD 0x3C
-checkResult
-
-test “2: A,B,C: 100,20,10\n”
-setPINA 0x64
-setPINB 0x14
-setPINC 0x0A
+expect PORTB 0x02
+setPINA 0x00
 continue 5
-expectPORTD 0x82
-checkResult
-
-test “3: A,B,C: 10,20,100\n”
-setPINA 0x0A
-setPINB 0x14
-setPINC 0x64
+expect PORTB 0x02
+setPINA 0x02
 continue 5
-expectPORTD 0x82
-checkResult
-
-test “4: A,B,C: 100,80,10\n”
-setPINA 0x64
-setPINB 0x50
-setPINC 0x0A
+expect PORTB 0x02
+setPINA 0x00
 continue 5
-expectPORTD 0xBF
+expect PORTB 0x02
+setPINA 0x01
+continue 5
+expect PORTB 0x01
+setPINA 0x00
+continue 5
+expect PORTB 0x01
 checkResult
 
 # Add tests below
