@@ -47,11 +47,29 @@ void button_switch() {
 			break;
 
 		case BS_plus :
-			BS_state = BS_start;
+			if (PINA & 0x01) {
+				BS_state = BS_plus;
+			}
+			else if (!(PINA & 0x0F)) {
+				BS_state = BS_start;
+			}
+			else if (PINA & 0x03) {
+				BS_state = BS_zero;
+				PORTC = 0;
+			}
 			break;
 
 		case BS_minus :
-			BS_state = BS_start;
+			if (PINA & 0x02) {
+				BS_state = BS_minus;
+			}
+			else if (!(PINA & 0x0F)) {
+				BS_state = BS_start;
+			}
+			else if (PINA & 0x03) {
+				BS_state = BS_zero;
+				PORTC = 0;
+			}
 			break;
 
 		case BS_zero :
@@ -61,7 +79,8 @@ void button_switch() {
 		default:
 			PORTC = 0x07;
 			BS_state = BS_start;
-			break;	
+			break;
+		break;	
 	}
 	switch(BS_state) {   // State actions
 		case BS_start :
