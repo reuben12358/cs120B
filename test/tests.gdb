@@ -50,7 +50,7 @@ expectPORTC 0x00
 setPINA 0x01
 continue 5
 expectPORTC 0x01
-expect BS_state = BS_start
+# expect BS_state = BS_start
 checkResult
 
 # Add tests below
