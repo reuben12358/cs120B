@@ -39,8 +39,8 @@ void button_switch() {
 				state = temp;
 			}
 			else if ((PINA & 0x0F) == 0x02) {
-				state = unlock;
 				PORTB = 0x01;
+				state = unlock;
 			}
 			else {
 				state = lock;
@@ -50,8 +50,8 @@ void button_switch() {
 		case unlock :
 			PORTC = 0x03;
 			if ((PINA & 0xF0) == 0x80) {
-				state = lock;
 				PORTB = 0x00;
+				state = lock;
 			}
 			else {
 				state = unlock;
