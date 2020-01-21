@@ -38,6 +38,7 @@ int main(void) {
 		// pa0-3 is the input
 
 		A = PINA;
+		C = PORTC;
 	
 		// unsigned char a0 = PINA & 0x01;
 		// unsigned char a1 = PINA & 0x02;
