@@ -15,6 +15,7 @@
 enum BS_states {BS_First, BS_start, BS_plus, BS_minus, BS_zero } BS_states;
 
 unsigned char button_switch(unsigned char A, unsigned char C) {
+	unsigned char temp = C;
 	switch (BS_states) {
 		case BS_First :
 			BS_states = BS_start;
@@ -40,21 +41,11 @@ unsigned char button_switch(unsigned char A, unsigned char C) {
 			break;
 
 		case BS_plus :
-			if ((A & 0x02) | (A & 0x03)) {
-				BS_states = BS_zero;
-			}
-			else if (!(A & 0x02)) {
-				BS_states = BS_start;
-			}
+			BS_states = BS_start;
 			break;
 
 		case BS_minus : 
-			if ((A & 0x01) | (A & 0x03)) {
-				BS_states = BS_zero;
-			}
-			else if (!(A & 0x01)) {
-				BS_states = BS_start;
-			}
+			BS_states = BS_start;
 			break;
 
 		case BS_zero :
@@ -67,39 +58,41 @@ unsigned char button_switch(unsigned char A, unsigned char C) {
 	}
 	switch(BS_states) {   // State actions
     	case BS_First :
-			C = 0x07;
+			temp = 0x07;
 			break;
 
 		case BS_start :
         	break;
 
     	case BS_plus:
-        	if (C++ < 10) {
-				C++;
+        	if (temp++ < 10) {
+				temp++;
 			}
         	break;
 
     	case BS_minus:
-        	if (C-- > -1) {
-				C--;
+        	if (temp-- > -1) {
+				temp--;
 			}
         	break;
 
     	case BS_zero:
-        	C = 0x00;
+        	temp = 0x00;
         	break;
 
 	    default:
-			C = 0x07;
+			temp = 0x07;
     	    break;
    	}
 
-	return C; 
+	return temp; 
 }
 
 int main(void) {
 	DDRA = 0x00; PORTA = 0xFF; // Configure port A's 8 pins as inputs
 	DDRC = 0xFF; PORTC = 0x00; // Configure port B's 8 pins as outputs, initialize to 0s
+
+	BS_states = BS_First;
 
 	unsigned char A = 0x00; // temp variable for value of A
 	unsigned char C = 0x07; // temp variable for value of B
