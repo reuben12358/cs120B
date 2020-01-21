@@ -14,7 +14,7 @@
 
 enum BS_states {BS_First, BS_start, BS_plus, BS_minus, BS_zero } BS_states;
 
-void button_switch(unsigned char A, unsigned char C) {
+unsigned char button_switch(unsigned char A, unsigned char C) {
 	switch (BS_states) {
 		case BS_First :
 			BS_states = BS_start;
@@ -92,7 +92,9 @@ void button_switch(unsigned char A, unsigned char C) {
 	    default:
 			C = 0x07;
     	    break;
-   } 
+   	}
+
+	return C; 
 }
 
 int main(void) {
@@ -121,7 +123,7 @@ int main(void) {
 		// 2) Perform computation
 		// if PA0 is 1, set PB1PB0 = 01, else = 10
 	
-		button_switch(A, C);
+		C = button_switch(A, 7);
 
 		// convert cntint to binary 
 		// 3) Write output
