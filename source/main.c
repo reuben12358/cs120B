@@ -12,7 +12,7 @@
 #include "simAVRHeader.h"
 #endif	
 
-unsigned char C = 7;
+unsigned char C = 0x00;
 
 enum BS_states {BS_start, BS_plus, BS_minus, BS_zero } BS_states;
 
@@ -78,6 +78,7 @@ int main(void) {
 	BS_states = BS_start;
 
 	unsigned char A = 0x00; // temp variable for value of A
+	C = 0x07;
 	
 	while(1) {
 		// 1) Read input
