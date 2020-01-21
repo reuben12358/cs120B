@@ -28,10 +28,10 @@ unsigned numberOnes(unsigned num) {
 
 int main(void) {
 	DDRA = 0x00; PORTA = 0xFF; // Configure port A's 8 pins as inputs
-	DDRB = 0xFF; PORTB = 0x00; // Configure port B's 8 pins as outputs, initialize to 0s
+	DDRC = 0xFF; PORTC = 0x00; // Configure port B's 8 pins as outputs, initialize to 0s
 
 	unsigned char A = 0x00; // temp variable for value of A
-	unsigned char B = 0x01; // temp variable for value of B
+	unsigned char C = 0x07; // temp variable for value of B
 	
 	while(1) {
 		// 1) Read input
@@ -52,18 +52,31 @@ int main(void) {
 		// 2) Perform computation
 		// if PA0 is 1, set PB1PB0 = 01, else = 10
 	
+		if (A & 0x03) {
+			C = 0x00;
+		}
+
 		if (A & 0x01) {
-			if (B == 0x01) {
-				B = 0x02;
+			if (C < 0x09) {
+				C += 1;
 			}
 			else {
-				B = 0x01;
+				C = 0x09;
+			}
+		}
+
+		if (A & 0x02) {
+			if (C > 0x00) {
+				C -= 1;
+			}
+			else {
+				C = 0x00;
 			}
 		}
 
 		// convert cntint to binary 
 		// 3) Write output
-		PORTB = B;
+		PORTC = C;
 	}
 	return 0;
 }
