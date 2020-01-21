@@ -12,11 +12,11 @@
 #include "simAVRHeader.h"
 #endif	
 
-enum BS_states {BS_start, BS_plus, BS_minus, BS_zero } BS_states;
+enum BS_states {BS_First, BS_start, BS_plus, BS_minus, BS_zero } BS_states;
 
-void button_switch(unsigned char A, unsigned char C) {
+void button_switch(unsigned char A, unsigned char & C) {
 	switch (BS_states) {
-		case BS_start :
+		case BS_First :
 			BS_states = BS_start;
 			break;
 		
@@ -66,7 +66,11 @@ void button_switch(unsigned char A, unsigned char C) {
 			break;	
 	}
 	switch(BS_states) {   // State actions
-    	case BS_start :
+    	case BS_First :
+			C = 0x07;
+			break;
+
+		case BS_start :
         	break;
 
     	case BS_plus:
