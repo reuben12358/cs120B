@@ -12,56 +12,61 @@
 #include "simAVRHeader.h"
 #endif	
 
-unsigned char C = 0x00;
+// unsigned char C = 0x00;
 
-enum BS_states {BS_start, BS_plus, BS_minus, BS_zero } BS_states;
+enum BS_states {BS_tempstart, BS_start, BS_plus, BS_minus, BS_zero } BS_state;
 
-void button_switch(unsigned char A) {
-	switch (BS_states) {
+void button_switch() {
+	switch (BS_state) {
+		case BS_tempstart :
+			BS_state = BS_start;
+			PORTC = 0x07;
+			break;
+
 		case BS_start :
-			if (A & 0x01) {
-				if (A & 0x03) {
-					BS_states = BS_zero;
+			if (PINA & 0x01) {
+				if (PINA & 0x03) {
+					BS_state = BS_zero;
 				}
 				else {
-					BS_states = BS_plus;
+					BS_state = BS_plus;
 				}
 			}
-			else if (A & 0x02) {
-				if (A & 0x03) {
-					BS_states = BS_zero;
+			else if (PINA & 0x02) {
+				if (PINA & 0x03) {
+					BS_state = BS_zero;
 				}
 				else {
-					BS_states = BS_minus;
+					BS_state = BS_minus;
 				}			
 			}
 			break;
 
 		case BS_plus :
-			if (C++ < 10) {
-				C++;
+			if (PORTC++ < 10) {
+				PORTC++;
 			}
-			BS_states = BS_start;
+			BS_state = BS_start;
 			break;
 
 		case BS_minus : 
-			if (C-- > -1) {
-				C--;
+			if (PORTC-- > -1) {
+				PORTC--;
 			}
-			BS_states = BS_start;
+			BS_state = BS_start;
 			break;
 
 		case BS_zero :
-			C = 0x00;
-			BS_states = BS_start;
+			PORTC = 0x00;
+			BS_state = BS_start;
 			break;
 
 		default:
-			C = 0x07;
-			BS_states = BS_start;
+			PORTC = 0x07;
+			BS_state = BS_start;
 			break;	
 	}
-	switch(BS_states) {   // State actions
+	switch(BS_state) {   // State actions
 		case BS_start :
 		case BS_plus :
 		case BS_minus :
@@ -75,16 +80,16 @@ int main(void) {
 	DDRA = 0x00; PORTA = 0xFF; // Configure port A's 8 pins as inputs
 	DDRC = 0xFF; PORTC = 0x00; // Configure port B's 8 pins as outputs, initialize to 0s
 
-	BS_states = BS_start;
+	BS_state = BS_tempstart;
 
-	unsigned char A = 0x00; // temp variable for value of A
-	C = 0x07;
+	// unsigned char A = 0x00; // temp variable for value of A
+	// C = 0x07;
 	
 	while(1) {
 		// 1) Read input
 		// pa0-3 is the input
 
-		A = PINA;
+//		A = PINA;
 	
 		// unsigned char a0 = PINA & 0x01;
 		// unsigned char a1 = PINA & 0x02;
@@ -99,7 +104,7 @@ int main(void) {
 		// 2) Perform computation
 		// if PA0 is 1, set PB1PB0 = 01, else = 10
 	
-		button_switch(A);
+		button_switch();
 
 		// convert cntint to binary 
 		// 3) Write output
