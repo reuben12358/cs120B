@@ -24,17 +24,17 @@ void button_switch() {
 			break;
 
 		case BS_zero :
-			if (PINA & 0x03) {
+			if ((PINA & 0x0F) == 0x03) {
 				BS_state = BS_zero;
 				PORTC = 0;
 			}
-			else if (PINA & 0x01) {
+			else if ((PINA & 0x0F) == 0x01) {
 				BS_state = BS_plus;
 				if (PORTC < 9) {
 					PORTC++;
 				}
 			}
-			else if (PINA & 0x02) {
+			else if ((PINA & 0x0F) == 0x02) {
 				BS_state = BS_minus;
 				if (PORTC > 0) {
 					PORTC--;
@@ -46,14 +46,14 @@ void button_switch() {
 			break;
 
 		case BS_plus :
-			if (PINA & 0x03) {
+			if ((PINA & 0x0F) == 0x03) {
 				BS_state = BS_zero;
 				PORTC = 0;
 			}
-			else if (PINA & 0x01) {
+			else if ((PINA & 0x0F) == 0x01) {
 				BS_state = BS_plus;
 			}
-			else if (!(PINA & 0x0F)) {
+			else if ((PINA & 0x0F) == 0x00) {
 				BS_state = BS_start;
 			}
 			else {
@@ -62,14 +62,14 @@ void button_switch() {
 			break;
 
 		case BS_minus :
-			if (PINA & 0x03) {
+			if ((PINA & 0x0F) == 0x03) {
 				BS_state = BS_zero;
 				PORTC = 0;
 			}
-			else if (PINA & 0x02) {
+			else if ((PINA & 0x0F) == 0x02) {
 				BS_state = BS_minus;
 			}
-			else if (!(PINA & 0x0F)) {
+			else if ((PINA & 0x0F) == 0x00) {
 				BS_state = BS_start;
 			}
 			else {
