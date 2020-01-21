@@ -74,11 +74,15 @@ void button_switch(unsigned char A, unsigned char C) {
         	break;
 
     	case BS_plus:
-        	C++;
+        	if (C++ < 10) {
+				C++;
+			}
         	break;
 
     	case BS_minus:
-        	C--;
+        	if (C-- > -1) {
+				C--;
+			}
         	break;
 
     	case BS_zero:
