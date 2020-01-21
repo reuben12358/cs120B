@@ -14,81 +14,52 @@
 
 // unsigned char C = 0x00;
 
-enum BS_states {BS_start, BS_plus, BS_minus, BS_zero } BS_state;
+enum BS_states {start, lock, temp, unlock } state;
 
 void button_switch() {
-	switch (BS_state) {
-		case BS_start :
-			BS_state = BS_zero;
-			PORTC = 0x07;
+	switch (state) {
+		case start :
+			state = lock;
+			PORTB = 0x00;
 			break;
 
-		case BS_zero :
-			if ((PINA & 0x0F) == 0x03) {
-				BS_state = BS_zero;
-				PORTC = 0;
-			}
-			else if ((PINA & 0x0F) == 0x01) {
-				BS_state = BS_plus;
-				if (PORTC < 9) {
-					PORTC++;
-				}
-			}
-			else if ((PINA & 0x0F) == 0x02) {
-				BS_state = BS_minus;
-				if (PORTC > 0) {
-					PORTC--;
-				}
+		case lock :
+			if ((PINA & 0x0F) == 0x04) {
+				state = temp;
 			}
 			else {
-				PORTC = PORTC;
+				state = lock;
 			}
 			break;
 
-		case BS_plus :
-			if ((PINA & 0x0F) == 0x03) {
-				BS_state = BS_zero;
-				PORTC = 0;
-			}
-			else if ((PINA & 0x0F) == 0x01) {
-				BS_state = BS_plus;
-			}
-			else if ((PINA & 0x0F) == 0x00) {
-				BS_state = BS_zero;
+		case temp :
+			if ((PINA & 0x0F) == 0x02) {
+				state = unlock;
+				PORTB = 0x01;
 			}
 			else {
-				PORTC = PORTC;
+				state = lock;
 			}
 			break;
 
-		case BS_minus :
-			if ((PINA & 0x0F) == 0x03) {
-				BS_state = BS_zero;
-				PORTC = 0;
-			}
-			else if ((PINA & 0x0F) == 0x02) {
-				BS_state = BS_minus;
-			}
-			else if ((PINA & 0x0F) == 0x00) {
-				BS_state = BS_zero;
-			}
-			else {
-				PORTC = PORTC;
+		case unlock :
+			if (PINA & 0x80) {
+				state = lock;
+				PORTB = 0x00;
 			}
 			break;
 
 		default:
-			PORTC = 0x07;
-			BS_state = BS_start;
+			state = start;
 			break;
 
 		break;	
 	}
-	switch(BS_state) {   // State actions
-		case BS_start :
-		case BS_zero :
-		case BS_plus :
-		case BS_minus :
+	switch(state) {   // State actions
+		case start :
+		case lock :
+		case temp :
+		case unlock :
 		default :
 		break;
    	}
@@ -96,9 +67,9 @@ void button_switch() {
 
 int main(void) {
 	DDRA = 0x00; PORTA = 0xFF; // Configure port A's 8 pins as inputs
-	DDRC = 0xFF; PORTC = 0x00; // Configure port B's 8 pins as outputs, initialize to 0s
+	DDRC = 0xFF; PORTB = 0x00; // Configure port B's 8 pins as outputs, initialize to 0s
 
-	BS_state = BS_start;
+	state = start;
 
 	// unsigned char A = 0x00; // temp variable for value of A
 	// C = 0x07;
