@@ -62,11 +62,11 @@ void button_switch(unsigned char A) {
 			break;	
 	}
 	switch(BS_states) {   // State actions
-		case BS_start;
-		case BS_plus;
-		case BS_minus;
-		case BS_zero;
-		default;
+		case BS_start :
+		case BS_plus :
+		case BS_minus :
+		case BS_zero :
+		default :
 		break;
    	}
 }
