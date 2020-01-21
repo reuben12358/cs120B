@@ -16,8 +16,7 @@ unsigned char C = 7;
 
 enum BS_states {BS_First, BS_start, BS_plus, BS_minus, BS_zero } BS_states;
 
-unsigned char button_switch(unsigned char A, unsigned char temp) {
-	C = temp;
+void button_switch(unsigned char A) {
 	switch (BS_states) {
 		case BS_First :
 			BS_states = BS_start;
@@ -86,15 +85,13 @@ unsigned char button_switch(unsigned char A, unsigned char temp) {
 			C = 0x07;
     	    break;
    	}
-
-	return temp; 
 }
 
 int main(void) {
 	DDRA = 0x00; PORTA = 0xFF; // Configure port A's 8 pins as inputs
 	DDRC = 0xFF; PORTC = 0x00; // Configure port B's 8 pins as outputs, initialize to 0s
 
-	BS_states = BS_First;
+	BS_states = BS_start;
 
 	unsigned char A = 0x00; // temp variable for value of A
 	
@@ -117,7 +114,7 @@ int main(void) {
 		// 2) Perform computation
 		// if PA0 is 1, set PB1PB0 = 01, else = 10
 	
-		C = button_switch(A, C);
+		button_switch(A);
 
 		// convert cntint to binary 
 		// 3) Write output
