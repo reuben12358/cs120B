@@ -54,7 +54,7 @@ void button_switch() {
 				BS_state = BS_plus;
 			}
 			else if ((PINA & 0x0F) == 0x00) {
-				BS_state = BS_start;
+				BS_state = BS_zero;
 			}
 			else {
 				PORTC = PORTC;
@@ -70,7 +70,7 @@ void button_switch() {
 				BS_state = BS_minus;
 			}
 			else if ((PINA & 0x0F) == 0x00) {
-				BS_state = BS_start;
+				BS_state = BS_zero;
 			}
 			else {
 				PORTC = PORTC;
