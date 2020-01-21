@@ -12,18 +12,79 @@
 #include "simAVRHeader.h"
 #endif	
 
+enum BS_states {BS_start, BS_plus, BS_minus, BS_zero } BS_states;
 
-unsigned numberOnes(unsigned num) {
-	int i;
-	int ones=0x00;
-	for(i = 0; i < 8; i++) {
-		if(num & 1) 
-			ones++;
+void button_switch(unsigned char A, unsigned char C) {
+	switch (BS_states) {
+		case BS_start :
+			BS_states = BS_start;
+			break;
+		
+		case BS_start :
+			if (A & 0x01) {
+				if (A & 0x03) {
+					BS_states = BS_zero;
+				}
+				else {
+					BS_states = BS_plus;
+				}
+			}
+			else if (A & 0x02) {
+				if (A & 0x03) {
+					BS_states = BS_zero;
+				}
+				else {
+					BS_states = BS_minus;
+				}			
+			}
+			break;
 
-		num >>= 1;
+		case BS_plus :
+			if ((A & 0x02) | (A & 0x03)) {
+				BS_states = BS_zero;
+			}
+			else if (!(A & 0x02)) {
+				BS_states = BS_start;
+			}
+			break;
+
+		case BS_minus : 
+			if ((A & 0x01) | (A & 0x03)) {
+				BS_states = BS_zero;
+			}
+			else if (!(A & 0x01)) {
+				BS_states = BS_start;
+			}
+			break;
+
+		case BS_zero :
+			BS_states = BS_start;
+			break;
+
+		default:
+			BS_states = BS_start;
+			break;	
 	}
+	switch(BS_states) {   // State actions
+    	case BS_start :
+        	break;
 
-	return ones;
+    	case BS_plus:
+        	C++;
+        	break;
+
+    	case BS_minus:
+        	C--;
+        	break;
+
+    	case BS_zero:
+        	C = 0x00;
+        	break;
+
+	    default:
+			C = 0x07;
+    	    break;
+   } 
 }
 
 int main(void) {
@@ -38,7 +99,6 @@ int main(void) {
 		// pa0-3 is the input
 
 		A = PINA;
-		C = PORTC;
 	
 		// unsigned char a0 = PINA & 0x01;
 		// unsigned char a1 = PINA & 0x02;
@@ -53,27 +113,7 @@ int main(void) {
 		// 2) Perform computation
 		// if PA0 is 1, set PB1PB0 = 01, else = 10
 	
-		if (A & 0x03) {
-			C = 0x00;
-		}
-
-		if (A & 0x01) {
-			if (C < 0x09) {
-				C += 1;
-			}
-			else {
-				C = 0x09;
-			}
-		}
-
-		if (A & 0x02) {
-			if (C > 0x00) {
-				C -= 1;
-			}
-			else {
-				C = 0x00;
-			}
-		}
+		button_switch(A, C);
 
 		// convert cntint to binary 
 		// 3) Write output
