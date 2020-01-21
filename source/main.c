@@ -14,35 +14,31 @@
 
 // unsigned char C = 0x00;
 
-enum BS_states {BS_tempstart, BS_start, BS_plus, BS_minus, BS_zero } BS_state;
+enum BS_states {BS_start, BS_plus, BS_minus, BS_zero } BS_state;
 
 void button_switch() {
 	switch (BS_state) {
-		case BS_tempstart :
-			BS_state = BS_start;
+		case BS_start :
+			BS_state = BS_zero;
 			PORTC = 0x07;
 			break;
 
-		case BS_start :
-			if (PINA & 0x01) {
-				if (PINA & 0x03) {
-					BS_state = BS_zero;
-					PORTC = 0;
-				}
-				else {
-					BS_state = BS_plus;
-					if (PORTC < 9) ++PORTC;
+		case BS_zero :
+			if (PINA & 0x03) {
+				BS_state = BS_zero;
+				PORTC = 0;
+			}
+			else if (PINA & 0x01) {
+				BS_state = BS_plus;
+				if (PORTC < 9) {
+					PORTC++;
 				}
 			}
 			else if (PINA & 0x02) {
-				if (PINA & 0x03) {
-					BS_state = BS_zero;
-					PORTC = 0;
+				BS_state = BS_minus;
+				if (PORTC > 0) {
+					PORTC--;
 				}
-				else {
-					BS_state = BS_minus;
-					if (PORTC > 0) --PORTC;
-				}			
 			}
 			else {
 				PORTC = PORTC;
@@ -50,15 +46,15 @@ void button_switch() {
 			break;
 
 		case BS_plus :
-			if (PINA & 0x01) {
+			if (PINA & 0x03) {
+				BS_state = BS_zero;
+				PORTC = 0;
+			}
+			else if (PINA & 0x01) {
 				BS_state = BS_plus;
 			}
 			else if (!(PINA & 0x0F)) {
 				BS_state = BS_start;
-			}
-			else if (PINA & 0x03) {
-				BS_state = BS_zero;
-				PORTC = 0;
 			}
 			else {
 				PORTC = PORTC;
@@ -66,24 +62,19 @@ void button_switch() {
 			break;
 
 		case BS_minus :
-			if (PINA & 0x02) {
+			if (PINA & 0x03) {
+				BS_state = BS_zero;
+				PORTC = 0;
+			}
+			else if (PINA & 0x02) {
 				BS_state = BS_minus;
 			}
 			else if (!(PINA & 0x0F)) {
 				BS_state = BS_start;
 			}
-			else if (PINA & 0x03) {
-				BS_state = BS_zero;
-				PORTC = 0;
-			}
 			else {
 				PORTC = PORTC;
 			}
-			break;
-
-		case BS_zero :
-			BS_state = BS_start;
-			PORTC = PORTC;
 			break;
 
 		default:
@@ -95,9 +86,9 @@ void button_switch() {
 	}
 	switch(BS_state) {   // State actions
 		case BS_start :
+		case BS_zero :
 		case BS_plus :
 		case BS_minus :
-		case BS_zero :
 		default :
 		break;
    	}
