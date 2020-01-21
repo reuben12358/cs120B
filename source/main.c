@@ -108,7 +108,6 @@ int main(void) {
 
 		// convert cntint to binary 
 		// 3) Write output
-		PORTC = C;
 	}
 	return 0;
 }
