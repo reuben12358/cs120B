@@ -14,14 +14,10 @@
 
 unsigned char C = 7;
 
-enum BS_states {BS_First, BS_start, BS_plus, BS_minus, BS_zero } BS_states;
+enum BS_states {BS_start, BS_plus, BS_minus, BS_zero } BS_states;
 
 void button_switch(unsigned char A) {
 	switch (BS_states) {
-		case BS_First :
-			BS_states = BS_start;
-			break;
-		
 		case BS_start :
 			if (A & 0x01) {
 				if (A & 0x03) {
@@ -42,48 +38,36 @@ void button_switch(unsigned char A) {
 			break;
 
 		case BS_plus :
+			if (C++ < 10) {
+				C++;
+			}
 			BS_states = BS_start;
 			break;
 
 		case BS_minus : 
+			if (C-- > -1) {
+				C--;
+			}
 			BS_states = BS_start;
 			break;
 
 		case BS_zero :
+			C = 0x00;
 			BS_states = BS_start;
 			break;
 
 		default:
+			C = 0x07;
 			BS_states = BS_start;
 			break;	
 	}
 	switch(BS_states) {   // State actions
-    	case BS_First :
-			C = 0x07;
-			break;
-
-		case BS_start :
-        	break;
-
-    	case BS_plus:
-        	if (C++ < 10) {
-				C++;
-			}
-        	break;
-
-    	case BS_minus:
-        	if (C-- > -1) {
-				C--;
-			}
-        	break;
-
-    	case BS_zero:
-        	C = 0x00;
-        	break;
-
-	    default:
-			C = 0x07;
-    	    break;
+		case BS_start;
+		case BS_plus;
+		case BS_minus;
+		case BS_zero;
+		default;
+		break;
    	}
 }
 
