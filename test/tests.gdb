@@ -28,7 +28,6 @@ echo Running all tests..."\n\n
 
 test "1: PINA: 0x04, 0x02, 0x80, 0x04, 0x04, 0x02, 0x01"
 
-#set BS_state = BS_start
 setPINA 0x04
 continue 5
 setPINA 0x02
@@ -53,7 +52,6 @@ setPINA 0x01
 continue 5
 expectPORTB 0x01
 
-#expect BS_state BS_plus
 checkResult
 
 # Add tests below
