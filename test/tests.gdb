@@ -56,6 +56,9 @@ expectPORTC 0x00
 setPINA 0x02
 continue 5
 expectPORTC 0x00
+setPINA 0x00
+continue 5
+expectPORTC 0x00
 setPINA 0x01
 continue 5
 expectPORTC 0x01
