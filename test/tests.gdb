@@ -28,7 +28,7 @@ echo Running all tests..."\n\n
 
 test "1: PINA: 0x01, 0x01, 0x01, 0x02, 0x03, 0x02, 0x01"
 
-set state = BS_start
+set BS_state = BS_start
 setPINA 0x01
 continue 5
 expectPORTC 0x08
@@ -50,7 +50,7 @@ expectPORTC 0x00
 setPINA 0x01
 continue 5
 expectPORTC 0x01
-expect state BS_zero
+expect BS_state BS_zero
 checkResult
 
 # Add tests below
