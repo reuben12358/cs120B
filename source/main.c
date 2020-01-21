@@ -44,6 +44,9 @@ void button_switch() {
 					if (PORTC > 0) --PORTC;
 				}			
 			}
+			else {
+				PORTC = PORTC;
+			}
 			break;
 
 		case BS_plus :
@@ -56,6 +59,9 @@ void button_switch() {
 			else if (PINA & 0x03) {
 				BS_state = BS_zero;
 				PORTC = 0;
+			}
+			else {
+				PORTC = PORTC;
 			}
 			break;
 
@@ -70,16 +76,21 @@ void button_switch() {
 				BS_state = BS_zero;
 				PORTC = 0;
 			}
+			else {
+				PORTC = PORTC;
+			}
 			break;
 
 		case BS_zero :
 			BS_state = BS_start;
+			PORTC = PORTC;
 			break;
 
 		default:
 			PORTC = 0x07;
 			BS_state = BS_start;
 			break;
+
 		break;	
 	}
 	switch(BS_state) {   // State actions
