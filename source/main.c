@@ -12,10 +12,12 @@
 #include "simAVRHeader.h"
 #endif	
 
+unsigned char C = 7;
+
 enum BS_states {BS_First, BS_start, BS_plus, BS_minus, BS_zero } BS_states;
 
-unsigned char button_switch(unsigned char A, unsigned char C) {
-	unsigned char temp = C;
+unsigned char button_switch(unsigned char A, unsigned char temp) {
+	C = temp;
 	switch (BS_states) {
 		case BS_First :
 			BS_states = BS_start;
@@ -58,30 +60,30 @@ unsigned char button_switch(unsigned char A, unsigned char C) {
 	}
 	switch(BS_states) {   // State actions
     	case BS_First :
-			temp = 0x07;
+			C = 0x07;
 			break;
 
 		case BS_start :
         	break;
 
     	case BS_plus:
-        	if (temp++ < 10) {
-				temp++;
+        	if (C++ < 10) {
+				C++;
 			}
         	break;
 
     	case BS_minus:
-        	if (temp-- > -1) {
-				temp--;
+        	if (C-- > -1) {
+				C--;
 			}
         	break;
 
     	case BS_zero:
-        	temp = 0x00;
+        	C = 0x00;
         	break;
 
 	    default:
-			temp = 0x07;
+			C = 0x07;
     	    break;
    	}
 
@@ -95,7 +97,6 @@ int main(void) {
 	BS_states = BS_First;
 
 	unsigned char A = 0x00; // temp variable for value of A
-	unsigned char C = 0x07; // temp variable for value of B
 	
 	while(1) {
 		// 1) Read input
@@ -116,7 +117,7 @@ int main(void) {
 		// 2) Perform computation
 		// if PA0 is 1, set PB1PB0 = 01, else = 10
 	
-		C = button_switch(A, 7);
+		C = button_switch(A, C);
 
 		// convert cntint to binary 
 		// 3) Write output
