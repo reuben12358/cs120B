@@ -27,37 +27,34 @@ void button_switch() {
 			if (PINA & 0x01) {
 				if (PINA & 0x03) {
 					BS_state = BS_zero;
+					PORTC = 0;
 				}
 				else {
 					BS_state = BS_plus;
+					if (PORTC < 9) ++PORTC;
 				}
 			}
 			else if (PINA & 0x02) {
 				if (PINA & 0x03) {
 					BS_state = BS_zero;
+					PORTC = 0;
 				}
 				else {
 					BS_state = BS_minus;
+					if (PORTC > 0) --PORTC;
 				}			
 			}
 			break;
 
 		case BS_plus :
-			if (PORTC++ < 10) {
-				PORTC++;
-			}
 			BS_state = BS_start;
 			break;
 
-		case BS_minus : 
-			if (PORTC-- > -1) {
-				PORTC--;
-			}
+		case BS_minus :
 			BS_state = BS_start;
 			break;
 
 		case BS_zero :
-			PORTC = 0x00;
 			BS_state = BS_start;
 			break;
 
