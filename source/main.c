@@ -30,13 +30,13 @@ void button_switch() {
 			}
 			else if ((PINA & 0x0F) == 0x01) {
 				BS_state = BS_plus;
-				if (PORTC < 10) {
+				if (PORTC < 9) {
 					PORTC++;
 				}
 			}
 			else if ((PINA & 0x0F) == 0x02) {
 				BS_state = BS_minus;
-				if (PORTC > -1) {
+				if (PORTC > 0) {
 					PORTC--;
 				}
 			}

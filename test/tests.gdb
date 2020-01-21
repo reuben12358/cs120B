@@ -32,9 +32,9 @@ set BS_state = BS_start
 setPINA 0x01
 continue 5
 expectPORTC 0x08
-setPINA 0x01
+setPINA 0x00
 continue 5
-expectPORTC 0x09
+expectPORTC 0x08
 setPINA 0x01
 continue 5
 expectPORTC 0x09
