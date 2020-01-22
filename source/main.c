@@ -24,7 +24,6 @@ void button_switch() {
 			break;
 
 		case lock :
-			PORTC = 0x01;
 			if ((PINA & 0x0F) == 0x04) {
 				state = temp;
 			}
@@ -34,7 +33,6 @@ void button_switch() {
 			break;
 
 		case temp :
-			PORTC = 0x02;
 			if ((PINA & 0x0F) == 0x04) {
 				state = temp;
 			}
@@ -48,7 +46,6 @@ void button_switch() {
 			break;
 
 		case unlock :
-			PORTC = 0x03;
 			if ((PINA & 0xF0) == 0x80) {
 				PORTB = 0x00;
 				state = lock;
@@ -77,7 +74,6 @@ void button_switch() {
 int main(void) {
 	DDRA = 0x00; PORTA = 0xFF; // Configure port A's 8 pins as inputs
 	DDRB = 0xFF; PORTB = 0x00; // Configure port B's 8 pins as outputs, initialize to 0s
-	DDRC = 0xFF; PORTC = 0x00;
 
 	state = start;
 
