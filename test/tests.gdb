@@ -35,7 +35,7 @@ continue 5
 expectPORTB 0x01
 printPORTC
 
-setPINA 0x08
+setPINA 0x80
 continue 5
 expectPORTB 0x00
 printPORTC
@@ -49,7 +49,7 @@ expectPORTB 0x00
 setPINA 0x02
 continue 5
 expectPORTB 0x01
-printPORTC
+printPORTC 
 
 setPINA 0x01
 continue 5
