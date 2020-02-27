@@ -26,33 +26,45 @@
 echo ======================================================\n
 echo Running all tests..."\n\n
 
-test "1: PINA: 0x04, 0x02, 0x80, 0x04, 0x04, 0x02, 0x01"
+#   Partner(s) Name & E-mail: Lucas Song (lsong013@ucr.edu) Reuben D'cunha
+#   Lab Section: 22
+#   Assignment: Lab # 2 Exercise # 1
+#   Exercise Description: [optional - include for your own benefit]
+#   
+#   I acknowledge all content contained herein, excluding template 
+#    or example code, is my own original work.
+#
 
-setPINA 0x04
-continue 5
-setPINA 0x02
-continue 5
-expectPORTB 0x01
 
-setPINA 0x80
+test “not open/night time-> light not on”
+setPINA 0x00
+#setPINB 0x00
 continue 5
 expectPORTB 0x00
-
-setPINA 0x04
-continue 5
-expectPORTB 0x00
-setPINA 0x04
-continue 5
-expectPORTB 0x00
-setPINA 0x02
-continue 5
-expectPORTB 0x01
-
-setPINA 0x01
-continue 5
-expectPORTB 0x01
-
 checkResult
+
+test “not open/day time-> light not on”
+setPINA 0x00
+setPINB 0X01
+continue 5
+expectPORTB 0x00
+checkResult
+
+test “door open/day time-> light not on”
+setPINA 0x00
+setPINB 0X01
+continue 5
+expectPORTB 0x00
+checkResult
+
+test “door open/nighttime -> light on”
+setPINA 0x01
+setPINB 0X00
+continue 5
+expectPORTB 0x01
+checkResult
+
+
 
 # Add tests below
 
