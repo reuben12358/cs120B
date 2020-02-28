@@ -122,7 +122,7 @@ int main(void) {
 	SNES_init();
 
 	unsigned short button = 0x0000;
-	unsigned char output = 0x00;
+	// unsigned char output = 0x00;
 		
 	while(1) {
 		// Controller();
