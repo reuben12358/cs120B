@@ -33,9 +33,9 @@ unsigned short Controller_Keys = 0;
 #define port  PORTA
 #define pin   PINA
 
-unsigned char ARRAY[2] = {LOW, HIGH};
-unsigned char clock_cnt = 1;
-unsigned char latch_cnt = 0;
+// unsigned char ARRAY[2] = {LOW, HIGH};
+// unsigned char clock_cnt = 1;
+// unsigned char latch_cnt = 0;
 
 #define NONE            0
 #define SNES_B        32768  
@@ -51,7 +51,7 @@ unsigned char latch_cnt = 0;
 #define SNES_L          32   
 #define SNES_R          16   
 
-#define OUTPUT_PORT PORTD
+// #define OUTPUT_PORT PORTD
 
 void SNES_init(){
     port |= (0x01 << clock);
@@ -72,7 +72,8 @@ unsigned short SNES_Read(){
     // For 16 clock cycles the controller outputs the keys pressed, 
 	// but first one is a bit different and some not used.
 	// See JChristy Part 6. 
-    for(int i = 0; i < 16; i++){
+	int i = 0;
+    for(i = 0; i < 16; i++){
         port &= ~(0x01 << clock);
         snes_pressed <<= 1;
         snes_pressed |= (((~pin) & (0x01  << data)) >> data);      
@@ -126,7 +127,7 @@ int main(void) {
 	while(1) {
 		// Controller();
 
-		output = 0x00;
+		// output = 0x00;
 		button = SNES_Read();
 
 	    if ((button & SNES_Y) == SNES_Y) {
