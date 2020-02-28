@@ -12,7 +12,8 @@
 #include "simAVRHeader.h"
 #endif
 
-// REFERENCE http://alumni.cs.ucr.edu/~hdomi001/breakout.pdf
+// REFERENCE: http://alumni.cs.ucr.edu/~hdomi001/breakout.pdf
+// REFERENCE: mgalo001@ucr.edu for snes controller code
 
 unsigned char SetBit(unsigned char pin, unsigned char number, unsigned char bin_value) 
 {
@@ -26,11 +27,11 @@ unsigned char GetBit(unsigned char port, unsigned char number)
 
 unsigned short Controller_Keys = 0;
 
-#define clock 0
-#define Latch 1
-#define data  2
-#define HIGH  1
-#define LOW  0
+#define clock PORTA0
+#define latch PORTA1
+#define data  PORTA2
+#define port  PORTA
+#define pin   PINA
 
 unsigned char ARRAY[2] = {LOW, HIGH};
 unsigned char clock_cnt = 1;
@@ -50,6 +51,37 @@ unsigned char latch_cnt = 0;
 #define SNES_L          32   
 #define SNES_R          16   
 
+#define OUTPUT_PORT PORTD
+
+void SNES_init(){
+    port |= (0x01 << clock);
+    port |= (0x01 << latch);
+}
+
+unsigned short SNES_Read(){
+    unsigned short snes_pressed = 0x0000;
+      
+    // Turn latch on and off. Send signal to SNES controller 
+
+    port |= (0x01 << latch);
+	port |= (0x01 << clock);
+    port &= ~(0x01 << latch);
+    
+    snes_pressed = (((~pin) & (0x01 << data)) >> data);
+    
+    // For 16 clock cycles the controller outputs the keys pressed, 
+	// but first one is a bit different and some not used.
+	// See JChristy Part 6. 
+    for(int i = 0; i < 16; i++){
+        port &= ~(0x01 << clock);
+        snes_pressed <<= 1;
+        snes_pressed |= (((~pin) & (0x01  << data)) >> data);      
+		port |= (0x01 << clock);
+    }
+    return snes_pressed;
+}
+
+/*
 void Controller()
 {
 	// clock = 0
@@ -80,14 +112,24 @@ void Controller()
 		PORTA = SetBit(PORTA,clock,ARRAY[clock_cnt]);
 	}
 }
+*/
 
 int main(void) {
+	DDRA = 0x03; PORTA = 0x00;
 	DDRB = 0xFF; PORTB = 0x00;
-	DDRA = 0xFF; PORTA = 0x00;
+
+	SNES_init();
+
+	unsigned short button = 0x0000;
+	unsigned char output = 0x00;
 		
 	while(1) {
-		Controller();
-	    if (Controller_Keys & SNES_Y) {
+		// Controller();
+
+		output = 0x00;
+		button = SNES_Read();
+
+	    if ((button & SNES_Y) == SNES_Y) {
 			PORTB = 0xff;
 		}
 		else {
