@@ -71,7 +71,6 @@ unsigned short SNES_Read(){
     
     // For 16 clock cycles the controller outputs the keys pressed, 
 	// but first one is a bit different and some not used.
-	// See JChristy Part 6. 
 	int i = 0;
     for(i = 0; i < 16; i++){
         port &= ~(0x01 << clock);
@@ -130,7 +129,14 @@ int main(void) {
 		// output = 0x00;
 		button = SNES_Read();
 
-	    if ((button & SNES_Y) == SNES_Y) {
+		/*if ((~PINA)&0x08) {
+			PORTB = 0xff;
+		}
+		else {
+			PORTB = 0x00;
+		}*/
+
+		if (button & SNES_X) {
 			PORTB = 0xff;
 		}
 		else {
