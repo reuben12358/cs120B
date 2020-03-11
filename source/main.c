@@ -11,11 +11,10 @@
 #ifdef _SIMULATE_
 #include "simAVRHeader.h"
 #endif
-#define F_CPU 8000000UL 
 #include <util/delay.h>
+#include "nokia5110.h"
 
-// REFERENCE: http://alumni.cs.ucr.edu/~hdomi001/breakout.pdf
-// REFERENCE: mgalo001@ucr.edu for snes controller code
+// REFERENCE: melanie for snes controller code
 
 /*
 volatile unsigned char TimerFlag = 0;
@@ -53,54 +52,16 @@ void TimerSet(unsigned long M)
 	_avr_timer_cntcurr = _avr_timer_M;
 }
 */
+
 unsigned char SetBit(unsigned char pin, unsigned char number, unsigned char bin_value) 
 {
 	return (bin_value ? pin | (0x01 << number) : pin & ~(0x01 << number));
 }
-#define F_CPU 8000000UL 
+
 unsigned char GetBit(unsigned char port, unsigned char number) 
 {
 	return ( port & (0x01 << number) );
 }
-/*
-typedef struct _task {
-	// Tasks should have members that include: state, period,
-	// a measurement of elapsed time, and a function pointer.
-	signed char state; //Task's current state
-	unsigned long int period; //Task period
-	unsigned long int elapsedTime; //Time elapsed since last task tick
-	int (*TickFct)(int); //Task tick function
-} task;
-*/
-/*
-unsigned short Controller_Keys = 0;
-
-#define clock PORTA2
-#define latch PORTA1
-#define data  PORTA0
-#define port  PORTA
-#define pin   PINA
-
-// unsigned char ARRAY[2] = {LOW, HIGH};
-// unsigned char clock_cnt = 1;
-// unsigned char latch_cnt = 0;
-
-#define NONE            0
-#define SNES_B        32768  
-#define SNES_Y        16384  
-#define SNES_SELECT   8192   
-#define SNES_START    4096   
-#define SNES_UP       2048   
-#define SNES_DOWN     1024   
-#define SNES_LEFT      512   
-#define SNES_RIGHT     256   
-#define SNES_A         128   
-#define SNES_X          64   
-#define SNES_L          32   
-#define SNES_R          16   
-
-// #define OUTPUT_PORT PORTD
-*/
 typedef enum {false, true} bool;
 
 #define SET_BIT(p,i) ((p) |= (1 << (i)))
@@ -141,67 +102,7 @@ unsigned short GetSNESIn()
 
 	return data;
 }
-/*
-void SNES_init(){
-    port |= (0x01 << clock);
-    port |= (0x01 << latch);
-}
 
-unsigned short SNES_Read(){
-    unsigned short snes_pressed = 0x0000;
-      
-    // Turn latch on and off. Send signal to SNES controller 
-
-    port |= (0x01 << latch);
-	port |= (0x01 << clock);
-    port &= ~(0x01 << latch);
-    
-    snes_pressed = (((~pin) & (0x01 << data)) >> data);
-    
-    // For 16 clock cycles the controller outputs the keys pressed, 
-	// but first one is a bit different and some not used.
-	int i = 0;
-    for(i = 0; i < 16; i++){
-        port &= ~(0x01 << clock);
-        snes_pressed <<= 1;
-        snes_pressed |= (((~pin) & (0x01  << data)) >> data);      
-		port |= (0x01 << clock);
-    }
-    return snes_pressed;
-}
-*/
-/*
-void Controller()
-{
-	// clock = 0
-	// Latch = 1
-	// data = 2
-	
-	Controller_Keys = 0;
-	PORTA = SetBit(PORTA,Latch,ARRAY[latch_cnt]);
-	PORTA = SetBit(PORTA,clock,ARRAY[clock_cnt]);
-	
-	latch_cnt = 1;
-	PORTA = SetBit(PORTA,Latch,ARRAY[latch_cnt]);
-	latch_cnt = 0;
-	PORTA = SetBit(PORTA,Latch,ARRAY[latch_cnt]);
-	
-	Controller_Keys = GetBit(~PINA, data);
-	
-	unsigned char i;
-	for (i = 0; i < 14; i++) 
-	{
-		clock_cnt = 0;
-		PORTA = SetBit(PORTA,clock,ARRAY[clock_cnt]);
-		
-		Controller_Keys <<= 1;
-		Controller_Keys = Controller_Keys + GetBit(~PINA, data);
-		
-		clock_cnt = 1;
-		PORTA = SetBit(PORTA,clock,ARRAY[clock_cnt]);
-	}
-}
-*/
 void mapPlayerInput(unsigned short rawInput, unsigned char* ins) {
 	unsigned char count = 0;
 	unsigned char i;
@@ -227,103 +128,162 @@ bool inputContains(unsigned char* ins, unsigned char input) {
 }
 
 unsigned char ins[12];
-// unsigned char pressed = 0;
-/*
-enum SNES_SM { SNES_wait, SNES_press, SNES_hold };
 
-int SNESInputTick(int state) {
-	
-	//get input from controller
- 	unsigned short button = GetSNESIn();
-	//PORTA = (PORTA & 0x01) | 0x00;
-	//PORTB = (PORTB & 0x00) | button;	//for debugging
-	mapPlayerInput(button, ins);
-	
-	//State machine transitions
-	switch (state) {
-		case SNES_wait: 
-			pressed = 0;
-			if(button != 0) {
-				state = SNES_press;
-			}
-			break;
-		case SNES_press: 
-			state = SNES_hold;	
-			pressed = 1;
-			break;
-		case SNES_hold:
-			if(!button) {
-				state = SNES_wait;
-			}
-			break;
-		default: state = SNES_wait; // default: Initial state
-			break;
-	}
+unsigned short button = 0x0000;
+int ingametimer = 0;
+int numturns = 0;
+int maxturns = 0;
+int showtimer = 0;
 
-	//State machine actions
+enum snes {gamestart, snes_wait, snes_start, snes_select , snes_a, snes_b, snes_x, snes_y, gameover } snes_state;
+
+void snes_tick(int state) {
 	switch(state) {
-		case SNES_wait:
+		case gamestart:
 			break;
-		case SNES_press:	//cheat codes ;)
-			PORTB=0x01;
+		case snes_wait:
+			if ((ingametimer >= 60) || (numturns >= maxturns)) {
+				snes_state = gameover;
+				break;
+			}
+
+			button = GetSNESIn();
+			mapPlayerInput(button, ins);
+
+			if (inputContains(ins, Start))
+				snes_state = snes_start;
+			else if (inputContains(ins, Select))
+				snes_state = snes_select;
+			else if (inputContains(ins, A))
+				snes_state = snes_a;
+			else if (inputContains(ins, B))
+				snes_state = snes_b;
+			else if (inputContains(ins, X))
+				snes_state = snes_x;
+			else if (inputContains(ins, Y))
+				snes_state = snes_y;
+			else 
+				snes_state = snes_wait;
 			break;
-		case SNES_hold:	
-			PORTB=0x01;
+		case snes_start: // reset difficulty
+			snes_state = snes_wait;
 			break;
-		default:		
+		case snes_select: // reset turns
+			snes_state = snes_wait;
+			break;		
+		case snes_a: // pour a -> b
+			snes_state = snes_wait;
+			break;		
+		case snes_b: // empty a/b
+			snes_state = snes_wait;
+			break;		
+		case snes_x: // fill a/b
+			snes_state = snes_wait;
+			break;		
+		case snes_y: // show timer
+			snes_state = snes_wait;
+			break;	
+		case gameover:
+			snes_state = gamestart;
+		default:
+			snes_state = gamestart;
 			break;
 	}
+	switch(state) {
+		case gamestart:
+			nokia_lcd_clear();
+			nokia_lcd_write_string("Welcome!",2);
+			nokia_lcd_write_string("Please choose Difficulty:   E(a),M(b),H(x)",1);
 
-	return state;
+			button = GetSNESIn();
+			mapPlayerInput(button, ins);
+
+			if (inputContains(ins, A)) {
+				maxturns = 999;
+				snes_state = snes_wait;
+			}
+			else if (inputContains(ins, B)) {
+				maxturns = 20;
+				snes_state = snes_wait;
+			}
+			else if (inputContains(ins, X)) {
+				maxturns = 10;
+				snes_state = snes_wait;
+			}
+			else 
+				snes_state = gamestart;
+			
+			ingametimer = 0;
+			numturns = 0;
+			break;
+		case snes_wait:
+			nokia_lcd_clear();
+			if (showtimer)
+				nokia_lcd_write_char((char)ingametimer%10 + 0x30,3);
+
+			ingametimer++;
+			break;
+		case snes_start:
+			numturns++;
+			ingametimer = 0;
+			break;
+		case snes_select:
+			numturns++;
+			ingametimer = 0;
+			break;
+		case snes_a:
+			numturns++;
+			ingametimer = 0;
+			break;
+		case snes_b:
+			numturns++;
+			ingametimer = 0;
+			break;
+		case snes_x:
+			numturns++;
+			ingametimer = 0;
+			break;
+		case snes_y:
+			if (!showtimer)
+				showtimer++;
+			else
+				showtimer--;
+			break;
+		case gameover:
+			nokia_lcd_clear();
+			nokia_lcd_write_string("Gameover",2);
+			nokia_lcd_write_string("Thank you for playing! PressSELECT 2 reset",1);
+
+			button = GetSNESIn();
+			mapPlayerInput(button, ins);
+
+			if (inputContains(ins, Select)) 
+				snes_state = gamestart;
+			else 
+				snes_state = gameover;
+
+			ingametimer = 0;
+			numturns = 0;
+			maxturns = 0;
+			break;
+	}
 }
-*/
+
 int main(void) {
 	DDRA = 0xFE; PORTA = 0x01;
 	DDRB = 0xFF; PORTB = 0x00;
 
-	// SNES_init();
-
-	unsigned short button = 0x0000;
 	// unsigned char output = 0x00;
-		
-	while(1) {
-		// Controller();
 
-		// output = 0x00;
-		// button = SNES_Read();
-		/*if ((~PINA)&0x08) {
-			PORTB = 0xff;
-		}
-		else {
-			PORTB = 0x00;
-		}*/
-		/*
-		task task1;
-		task1.state = -1; //Task initial state.
-		task1.period = 50; //Task Period.
-		task1.elapsedTime = 50; //Task current elapsed time.
-		task1.TickFct = &SNESInputTick; //Function pointer for the tick. 
-
-		if (button & SNES_X) {
-			PORTB = 0xff;
-		}
-		else {
-			PORTB = 0x00;
-		}*/
-		/*
-		while(!TimerFlag);
-		task1.state = task1.TickFct(task1.state);
-		TimerFlag = 0;
-		*/
-		
-		button = GetSNESIn();
-		mapPlayerInput(button, ins);
-		if (inputContains(ins, Start)) {
-			PORTB = 0x0F;
-		}
-		else {
-			PORTB = 0x00;
-		}
+	nokia_lcd_init();
+	nokia_lcd_clear();
+	
+	snes_state = gamestart;
+	
+	while(1) {		
+		// screensize is 14
+		snes_tick(snes_state);
+		nokia_lcd_render();
 	}
 	return 0;
 }
