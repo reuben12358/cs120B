@@ -166,7 +166,7 @@ void snes_tick(int state) {
 				snes_state = snes_wait;
 			break;
 		case snes_start: // reset difficulty
-			snes_state = snes_wait;
+			snes_state = gamestart;
 			break;
 		case snes_select: // reset turns
 			snes_state = snes_wait;
@@ -218,17 +218,20 @@ void snes_tick(int state) {
 			break;
 		case snes_wait:
 			nokia_lcd_clear();
-			if (showtimer)
+			if (showtimer) {
+				nokia_lcd_write_char((char)ingametimer/10 + 0x30,3);
 				nokia_lcd_write_char((char)ingametimer%10 + 0x30,3);
-
+			}
 			ingametimer++;
 			break;
 		case snes_start:
-			numturns++;
 			ingametimer = 0;
+			numturns = 0;
+			
+			
 			break;
 		case snes_select:
-			numturns++;
+			numturns = 0;
 			ingametimer = 0;
 			break;
 		case snes_a:
